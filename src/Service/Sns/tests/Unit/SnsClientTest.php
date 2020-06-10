@@ -5,15 +5,18 @@ namespace AsyncAws\Sns\Tests\Unit;
 use AsyncAws\Core\Credentials\NullProvider;
 use AsyncAws\Core\Result;
 use AsyncAws\Core\Test\TestCase;
+use AsyncAws\Sns\Input\CreatePlatformApplicationInput;
 use AsyncAws\Sns\Input\CreatePlatformEndpointInput;
 use AsyncAws\Sns\Input\CreateTopicInput;
 use AsyncAws\Sns\Input\DeleteEndpointInput;
+use AsyncAws\Sns\Input\DeletePlatformApplicationInput;
 use AsyncAws\Sns\Input\DeleteTopicInput;
 use AsyncAws\Sns\Input\ListSubscriptionsByTopicInput;
 use AsyncAws\Sns\Input\PublishInput;
 use AsyncAws\Sns\Input\SubscribeInput;
 use AsyncAws\Sns\Input\UnsubscribeInput;
 use AsyncAws\Sns\Result\CreateEndpointResponse;
+use AsyncAws\Sns\Result\CreatePlatformApplicationResponse;
 use AsyncAws\Sns\Result\CreateTopicResponse;
 use AsyncAws\Sns\Result\ListSubscriptionsByTopicResponse;
 use AsyncAws\Sns\Result\PublishResponse;
@@ -23,6 +26,21 @@ use Symfony\Component\HttpClient\MockHttpClient;
 
 class SnsClientTest extends TestCase
 {
+    public function testCreatePlatformApplication(): void
+    {
+        $client = new SnsClient([], new NullProvider(), new MockHttpClient());
+
+        $input = new CreatePlatformApplicationInput([
+            'Name' => 'change me',
+            'Platform' => 'change me',
+            'Attributes' => ['change me' => 'change me'],
+        ]);
+        $result = $client->CreatePlatformApplication($input);
+
+        self::assertInstanceOf(CreatePlatformApplicationResponse::class, $result);
+        self::assertFalse($result->info()['resolved']);
+    }
+
     public function testCreatePlatformEndpoint(): void
     {
         $client = new SnsClient([], new NullProvider(), new MockHttpClient());
@@ -60,6 +78,19 @@ class SnsClientTest extends TestCase
             'EndpointArn' => 'change me',
         ]);
         $result = $client->DeleteEndpoint($input);
+
+        self::assertInstanceOf(Result::class, $result);
+        self::assertFalse($result->info()['resolved']);
+    }
+
+    public function testDeletePlatformApplication(): void
+    {
+        $client = new SnsClient([], new NullProvider(), new MockHttpClient());
+
+        $input = new DeletePlatformApplicationInput([
+            'PlatformApplicationArn' => 'change me',
+        ]);
+        $result = $client->DeletePlatformApplication($input);
 
         self::assertInstanceOf(Result::class, $result);
         self::assertFalse($result->info()['resolved']);

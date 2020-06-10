@@ -7,15 +7,18 @@ use AsyncAws\Core\Configuration;
 use AsyncAws\Core\Exception\UnsupportedRegion;
 use AsyncAws\Core\RequestContext;
 use AsyncAws\Core\Result;
+use AsyncAws\Sns\Input\CreatePlatformApplicationInput;
 use AsyncAws\Sns\Input\CreatePlatformEndpointInput;
 use AsyncAws\Sns\Input\CreateTopicInput;
 use AsyncAws\Sns\Input\DeleteEndpointInput;
+use AsyncAws\Sns\Input\DeletePlatformApplicationInput;
 use AsyncAws\Sns\Input\DeleteTopicInput;
 use AsyncAws\Sns\Input\ListSubscriptionsByTopicInput;
 use AsyncAws\Sns\Input\PublishInput;
 use AsyncAws\Sns\Input\SubscribeInput;
 use AsyncAws\Sns\Input\UnsubscribeInput;
 use AsyncAws\Sns\Result\CreateEndpointResponse;
+use AsyncAws\Sns\Result\CreatePlatformApplicationResponse;
 use AsyncAws\Sns\Result\CreateTopicResponse;
 use AsyncAws\Sns\Result\ListSubscriptionsByTopicResponse;
 use AsyncAws\Sns\Result\PublishResponse;
@@ -24,6 +27,32 @@ use AsyncAws\Sns\ValueObject\Subscription;
 
 class SnsClient extends AbstractApi
 {
+    /**
+     * Creates a platform application object for one of the supported push notification services, such as APNS and FCM, to
+     * which devices and mobile apps may register. You must specify PlatformPrincipal and PlatformCredential attributes when
+     * using the `CreatePlatformApplication` action. The PlatformPrincipal is received from the notification service. For
+     * APNS/APNS_SANDBOX, PlatformPrincipal is "SSL certificate". For FCM, PlatformPrincipal is not applicable. For ADM,
+     * PlatformPrincipal is "client id". The PlatformCredential is also received from the notification service. For WNS,
+     * PlatformPrincipal is "Package Security Identifier". For MPNS, PlatformPrincipal is "TLS certificate". For Baidu,
+     * PlatformPrincipal is "API key".
+     *
+     * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sns-2010-03-31.html#createplatformapplication
+     *
+     * @param array{
+     *   Name: string,
+     *   Platform: string,
+     *   Attributes: array<string, string>,
+     *   @region?: string,
+     * }|CreatePlatformApplicationInput $input
+     */
+    public function createPlatformApplication($input): CreatePlatformApplicationResponse
+    {
+        $input = CreatePlatformApplicationInput::create($input);
+        $response = $this->getResponse($input->request(), new RequestContext(['operation' => 'CreatePlatformApplication', 'region' => $input->getRegion()]));
+
+        return new CreatePlatformApplicationResponse($response);
+    }
+
     /**
      * Creates an endpoint for a device and mobile app on one of the supported push notification services, such as FCM and
      * APNS. `CreatePlatformEndpoint` requires the PlatformApplicationArn that is returned from `CreatePlatformApplication`.
@@ -91,6 +120,26 @@ class SnsClient extends AbstractApi
     {
         $input = DeleteEndpointInput::create($input);
         $response = $this->getResponse($input->request(), new RequestContext(['operation' => 'DeleteEndpoint', 'region' => $input->getRegion()]));
+
+        return new Result($response);
+    }
+
+    /**
+     * Deletes a platform application object for one of the supported push notification services, such as APNS and FCM. For
+     * more information, see Using Amazon SNS Mobile Push Notifications.
+     *
+     * @see https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html
+     * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sns-2010-03-31.html#deleteplatformapplication
+     *
+     * @param array{
+     *   PlatformApplicationArn: string,
+     *   @region?: string,
+     * }|DeletePlatformApplicationInput $input
+     */
+    public function deletePlatformApplication($input): Result
+    {
+        $input = DeletePlatformApplicationInput::create($input);
+        $response = $this->getResponse($input->request(), new RequestContext(['operation' => 'DeletePlatformApplication', 'region' => $input->getRegion()]));
 
         return new Result($response);
     }

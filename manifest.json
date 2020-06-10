@@ -163,9 +163,11 @@
             "pagination": "https://raw.githubusercontent.com/aws/aws-sdk-php/${LATEST}/src/data/sns/2010-03-31/paginators-1.json",
             "example": "https://raw.githubusercontent.com/aws/aws-sdk-php/${LATEST}/src/data/sns/2010-03-31/examples-1.json",
             "methods": [
+                "CreatePlatformApplication",
                 "CreatePlatformEndpoint",
                 "CreateTopic",
                 "DeleteEndpoint",
+                "DeletePlatformApplication",
                 "DeleteTopic",
                 "ListSubscriptionsByTopic",
                 "Publish",
